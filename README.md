@@ -1,4 +1,4 @@
-#Eye Controlled Cursor
+## Eye Controlled Cursor
 
 Control your mouse cursor with your eyes using just a webcam. Move your eyes to move the cursor, and blink to click.
 
