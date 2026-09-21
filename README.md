@@ -1,106 +1,63 @@
-# Eye-controlled-cursor
-Eye Controlled Mouse
+# 👁️ Eye Controlled Cursor
 
-Control your computer's mouse cursor with your eyes using a regular webcam. The project uses MediaPipe Face Mesh to track your iris and PyAutoGUI to move the cursor. Blink your left eye to click.
+Control your mouse cursor with your eyes using just a webcam. Move your eyes to move the cursor, and blink to click.
 
-Features
-Cursor follows your eye (iris) movement in real time
-Blink your left eye to left-click
-Smooth cursor movement to reduce jitter
-Live webcam preview with tracked landmarks drawn on screen
-Clean exit with a quit key
-Adjustable settings for smoothing and blink sensitivity
-How It Works
-OpenCV captures frames from your webcam.
-MediaPipe Face Mesh (with refine_landmarks=True) detects 478 face landmarks, including the iris.
-The iris position (landmarks 474–477) is mapped to your screen size, and PyAutoGUI moves the cursor there.
-The distance between the upper and lower eyelid of the left eye (landmarks 159 and 145) is measured. When it falls below a threshold, the script registers a blink and clicks.
-Requirements
-Python 3.9 – 3.12
-A working webcam
-Libraries:
-opencv-python
-mediapipe==0.10.14
-pyautogui
+Built with **OpenCV**, **MediaPipe Face Mesh** and **PyAutoGUI**.
 
-Note: Newer MediaPipe versions removed the mp.solutions API this project uses. Please install version 0.10.14 as shown below.
+## Features
 
-Installation
-Clone the repository:
-bash
-   git clone https://github.com/<your-username>/<your-repo-name>.git
-   cd <your-repo-name>
-(Recommended) Create and activate a virtual environment:
-bash
-   # Windows
-   py -3.12 -m venv venv
-   venv\Scripts\activate
+- Cursor follows your iris in real time, with smoothing to reduce jitter
+- Click by blinking both eyes (or winking one eye for left/right click)
+- Deliberate-blink detection, so normal blinks don't cause accidental clicks
+- Cursor freezes while your eyes are closed, so it doesn't jump when you click
+- Live preview showing eye-openness values for easy tuning
+- Quit with `q`, `Ctrl+C`, or by moving the cursor to a screen corner
 
-   # macOS / Linux
-   python3 -m venv venv
-   source venv/bin/activate
-Install the dependencies:
-bash
-   pip install opencv-python mediapipe==0.10.14 pyautogui
-Usage
+## Requirements
 
-Run the script:
+- Python 3.9 to 3.12
+- A webcam
 
-bash
+```bash
+pip install opencv-python mediapipe==0.10.14 pyautogui
+```
+
+> MediaPipe `0.10.14` is required. Newer versions removed the `mp.solutions` API this project uses.
+
+## Usage
+
+```bash
 python eye_mouse.py
+```
 
-A window titled Eye Controlled Mouse will open. Look around to move the cursor, and blink your left eye to click.
+| Action | Result |
+|---|---|
+| Move your eyes | Moves the cursor |
+| Close both eyes for ~0.4 s (`blink` mode) | Left click |
+| Close left / right eye (`wink` mode) | Left / right click |
+| Press `q` in the webcam window | Quit |
 
-Controls
-Action	Result
-Move your eyes	Moves the cursor
-Blink left eye	Left click
-Press q (webcam window focused)	Quit the program
-Ctrl + C in the terminal	Quit the program
-Move the cursor to a screen corner	PyAutoGUI failsafe stops the program
-Configuration
+## Settings
 
-Edit the settings at the top of eye_mouse.py:
+Edit these at the top of `eye_mouse.py`:
 
-Setting	Default	Description
-SMOOTHING	0.3	Lower = smoother but slower cursor. 1 = no smoothing.
-BLINK_THRESHOLD	0.004	Lower = you must close your eye more to click.
-CLICK_DELAY	1	Seconds to wait after each click.
-CAMERA_INDEX	0	Change to 1 if the wrong camera or a black window appears.
-Troubleshooting
+| Setting | Default | Description |
+|---|---|---|
+| `CLICK_MODE` | `"blink"` | `"blink"` = both eyes to left-click, `"wink"` = one eye per click type |
+| `HOLD_TIME` | `0.4` | Seconds eyes must stay closed to click |
+| `BLINK_RATIO` | `0.18` | Eye counts as closed below this value (lower = harder to click) |
+| `SMOOTHING` | `0.3` | Lower = smoother but slower cursor |
+| `CAMERA_INDEX` | `0` | Use `1` if the wrong camera or a black window appears |
 
-AttributeError: module 'mediapipe' has no attribute 'solutions' Install the compatible version and make sure you're on Python 3.9–3.12:
+**Tip:** the on-screen `L:` and `R:` numbers show how open each eye is. Set `BLINK_RATIO` between your open and closed values.
 
-bash
-pip uninstall mediapipe -y
-pip install mediapipe==0.10.14
+## Troubleshooting
 
-Also check that no file in your project is named mediapipe.py or cv2.py.
+- **`module 'mediapipe' has no attribute 'solutions'`**: run `pip install mediapipe==0.10.14` and use Python 3.9 to 3.12.
+- **Clicks too often or never**: adjust `BLINK_RATIO` or `HOLD_TIME`.
+- **Jittery cursor**: lower `SMOOTHING` and use bright, even lighting.
+- **macOS**: allow camera and accessibility access for your terminal or VS Code.
 
-Black or blank webcam window Set CAMERA_INDEX = 1 (or another number) in the script, and close other apps that may be using the camera.
+## Tech Stack
 
-Cursor doesn't move on macOS Grant camera and accessibility permissions to your terminal or VS Code in System Settings → Privacy & Security.
-
-Cursor is jittery Lower the SMOOTHING value, use good lighting, and keep your head fairly steady.
-
-Clicks happen too often or never happen Adjust BLINK_THRESHOLD up or down in small steps (for example 0.003 to 0.006).
-
-Tips for Best Results
-Use bright, even lighting on your face.
-Sit facing the camera at a comfortable distance.
-Keep your head relatively still and move mainly your eyes.
-Limitations
-Accuracy depends on webcam quality and lighting.
-Only the left eye is used for clicking, and there is no right-click or double-click yet.
-Not designed for multi-monitor setups.
-Ideas for Future Improvements
-Right-click and double-click gestures
-Calibration step for better accuracy
-Multi-monitor support
-Head-pose compensation
-Scroll control
-Tech Stack
-Python
-OpenCV
-MediaPipe
-PyAutoGUI
+Python, OpenCV, MediaPipe, PyAutoGUI
